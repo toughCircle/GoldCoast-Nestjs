@@ -1,0 +1,23 @@
+# Node.js 베이스 이미지 설정
+FROM node:18
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# package.json, tsconfig.json 파일 복사
+COPY package*.json tsconfig*.json ./
+
+# 의존성 설치
+RUN npm install
+
+# 소스 코드 및 tsconfig 파일 복사
+COPY ./apps/auth ./apps/auth
+COPY ./tsconfig.json ./apps/auth/tsconfig.json 
+COPY ./libs/common ./libs/common
+COPY ./apps/auth/src/grpc/proto/auth.proto ./apps/auth/src/grpc/proto/auth.proto
+
+# 애플리케이션 빌드
+RUN npm run build
+
+# 애플리케이션 실행
+CMD ["node", "dist/apps/auth/src/main.js"]

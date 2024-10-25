@@ -1,0 +1,61 @@
+version: '3.8'
+services:
+  auth-db:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: auth
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - '8888:3306'
+
+  resource-db:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: resource
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - '9999:3306'
+
+  auth-server:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+    ports:
+      - '3000:3000' # HTTP 요청 포트
+      - '5001:5001' # gRPC 요청 포트
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=${AUTH_DB_HOST} # .env 파일의 AUTH_DB_HOST 사용
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${AUTH_DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - GRPC_RESOURCE_SERVER_URL=${GRPC_RESOURCE_SERVER_URL}
+    depends_on:
+      - auth-db
+
+  resource-server:
+    build:
+      context: .
+      dockerfile: ./apps/resource/Dockerfile
+    ports:
+      - '4000:4000' # HTTP 요청 포트
+      - '5002:5002' # gRPC 요청 포트
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=${RESOURCE_DB_HOST} # .env 파일의 RESOURCE_DB_HOST 사용
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${RESOURCE_DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - GRPC_AUTH_SERVER_URL=${GRPC_AUTH_SERVER_URL}
+    depends_on:
+      - resource-db
+
+networks:
+  default:
+    driver: bridge
