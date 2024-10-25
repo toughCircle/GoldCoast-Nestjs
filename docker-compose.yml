@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   auth-db:
-    image: mysql
+    image: mysql:8.0
     environment:
       MYSQL_DATABASE: auth
       MYSQL_ROOT_PASSWORD: password
@@ -9,7 +9,7 @@ services:
       - '8888:3306'
 
   resource-db:
-    image: mysql
+    image: mysql:8.0
     environment:
       MYSQL_DATABASE: resource
       MYSQL_ROOT_PASSWORD: password
