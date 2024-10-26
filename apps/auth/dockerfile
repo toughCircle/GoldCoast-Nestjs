@@ -2,7 +2,8 @@
 FROM node:18
 
 RUN apt-get update && \
-    apt-get install -y libcrypt1 python3
+    apt-get install -y libcrypt-dev libpython3.7 python3
+
 
 # 작업 디렉토리 설정
 WORKDIR /app
