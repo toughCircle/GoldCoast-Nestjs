@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ValidateTokenRequest, ValidateTokenResponse } from '../auth.interface';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from './user.service';
 
@@ -11,7 +11,7 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  @GrpcMethod()
+  @GrpcMethod('AuthService', 'ValidateToken')
   async validateToken(
     data: ValidateTokenRequest,
   ): Promise<ValidateTokenResponse> {
@@ -37,7 +37,7 @@ export class AuthService {
       };
     } catch (error) {
       console.error('Token validation failed:', error);
-      throw new Error('Invalid token');
+      throw new RpcException('Invalid token');
     }
   }
 }
