@@ -37,6 +37,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
       - GRPC_RESOURCE_SERVER_URL=${GRPC_AUTH_SERVER_URL}
+      - TZ=Asia/Seoul
     depends_on:
       - auth-db
     networks:
@@ -58,6 +59,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
       - GRPC_AUTH_SERVER_URL=${GRPC_AUTH_SERVER_URL}
+      - TZ=Asia/Seoul
     depends_on:
       - resource-db
     networks:
