@@ -55,10 +55,8 @@ jobs:
           echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${REMOTE_HOST}" >> ~/.ssh/known_hosts
-          ssh "${REMOTE_USER}@${REMOTE_HOST}" << EOF
-            set -e
-            cd nest-project
-            git pull origin main
-            docker-compose up -d --build --no-cache
+          ssh -i ~/.ssh/id_rsa "${REMOTE_USER}@${REMOTE_HOST}" << EOF
+            docker-compose pull
+            docker-compose up -d
             exit
           EOF
