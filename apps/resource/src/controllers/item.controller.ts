@@ -20,7 +20,7 @@ import { ItemDto } from '../dto/item.dto.js';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
 import { Request } from 'express';
 
-@Controller('items')
+@Controller('resource/items')
 @UseGuards(JwtAuthGuard)
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}

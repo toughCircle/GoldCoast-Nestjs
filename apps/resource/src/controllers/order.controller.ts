@@ -18,7 +18,7 @@ import { OrderStatus } from '../enums/order-status.enum';
 import { BaseApiResponse } from '@app/common';
 import { OrderDto } from '../dto/order.dto';
 
-@Controller('orders')
+@Controller('resource/orders')
 @UseGuards(JwtAuthGuard)
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
