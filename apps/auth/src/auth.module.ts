@@ -13,6 +13,7 @@ import { User } from './models/user.model';
 import { UserService } from './services/user.service';
 import { JwtManager } from './services/jwt-manager.service';
 import { JwtConfigModule } from './config/jwt-config.module';
+import { GrpcAuthController } from './controllers/grpc-auth.controller';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { JwtConfigModule } from './config/jwt-config.module';
     TypeOrmModule.forFeature([User]),
     forwardRef(() => JwtConfigModule),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, GrpcAuthController],
   providers: [AuthService, CommonService, UserService, JwtManager],
   exports: [UserService, TypeOrmModule],
 })

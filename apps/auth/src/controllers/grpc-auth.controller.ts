@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../services/user.service';
 
 @Controller('auth')
-export class AuthController {
+export class GrpcAuthController {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
