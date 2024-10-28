@@ -3,7 +3,7 @@ syntax = "proto3";
 package auth;
 
 service AuthService {
-  rpc ValidateToken (ValidateTokenRequest) returns (ValidateTokenResponse);
+  rpc validateToken (ValidateTokenRequest) returns (ValidateTokenResponse);
 }
 
 message ValidateTokenRequest {
