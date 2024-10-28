@@ -5,11 +5,11 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
 
-@Controller('auth')
+@Controller()
 export class GrpcAuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @GrpcMethod('AuthService', 'ValidateToken')
+  @GrpcMethod()
   ValidateToken(request: ValidateTokenRequest) {
     return this.authService.validateToken(request);
   }
