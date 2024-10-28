@@ -17,6 +17,7 @@ export class AuthService implements OnModuleInit {
   onModuleInit() {
     this.authServiceGrpc =
       this.client.getService<AuthServiceClient>('AuthService');
+    console.log('authServiceGrpc initialized:', this.authServiceGrpc); // 초기화 여부 확인
   }
 
   async validateToken(token: string): Promise<ValidateTokenResponse> {
