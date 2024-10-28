@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { ValidateTokenRequest, ValidateTokenResponse } from '../auth.interface';
 import { JwtService } from '@nestjs/jwt';
@@ -13,6 +13,7 @@ export class GrpcAuthController {
 
   @Post('valid')
   async validateToken(
+    @Body()
     data: ValidateTokenRequest,
   ): Promise<ValidateTokenResponse> {
     console.log(
