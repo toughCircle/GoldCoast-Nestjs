@@ -45,15 +45,14 @@ jobs:
     needs: build
 
     steps:
-      - name: Install SSH client
-        run: sudo apt-get install -y ssh
-
       - name: Deploy to GCP VM
         env:
           SSH_PRIVATE_KEY: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.GCP_VM_IP }}
           REMOTE_USER: ${{ secrets.GCP_VM_USER }}
         run: |
+          # ~/.ssh 디렉터리 생성
+          mkdir -p ~/.ssh
           echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${REMOTE_HOST}" >> ~/.ssh/known_hosts
