@@ -14,7 +14,6 @@ RUN npm install
 COPY ./apps/resource ./apps/resource
 COPY ./tsconfig.json ./apps/resource/tsconfig.json
 COPY ./libs/common ./libs/common
-COPY ./apps/resource/src/grpc/proto/auth.proto ./apps/resource/src/grpc/proto/auth.proto
 
 # 애플리케이션 빌드
 RUN npm run build

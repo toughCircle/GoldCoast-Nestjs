@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ValidateTokenRequest, ValidateTokenResponse } from '../auth.interface';
 
 interface AuthServiceClient {
-  validateToken(data: ValidateTokenRequest): Observable<ValidateTokenResponse>;
+  ValidateToken(data: ValidateTokenRequest): Observable<ValidateTokenResponse>;
 }
 
 @Injectable()
@@ -22,6 +22,6 @@ export class AuthService {
   // gRPC를 통해 인증 서버에 토큰 검증 요청
   validateToken(token: string): Observable<ValidateTokenResponse> {
     console.log('call validateToken');
-    return this.authServiceGrpc.validateToken({ token });
+    return this.authServiceGrpc.ValidateToken({ token });
   }
 }

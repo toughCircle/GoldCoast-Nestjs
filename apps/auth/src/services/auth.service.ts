@@ -23,6 +23,7 @@ export class AuthService {
       const email = payload.sub;
       console.log('email: ' + email);
 
+      // 사용자 조회
       const user = await this.userService.findByEmail(email);
       console.log('user : ' + user.id + ', ' + user.username);
 
@@ -33,8 +34,7 @@ export class AuthService {
         role: user.role,
       };
     } catch (error) {
-      // 유효하지 않은 토큰일 경우 빈 값을 반환
-      return { userId: '', username: '', email: '', role: '' };
+      throw new Error('Invalid token');
     }
   }
 }

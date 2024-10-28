@@ -6,7 +6,7 @@ export const grpcServerOptions: GrpcOptions = {
   transport: Transport.GRPC,
   options: {
     package: 'auth',
-    protoPath: join(process.cwd(), 'apps/auth/src/grpc/proto/auth.proto'),
-    url: `${appConfig.grpc.authServerUrl}`,
+    protoPath: join(process.cwd(), 'libs/common/src/proto/auth.proto'),
+    url: '0.0.0.0:5001',
   },
 };

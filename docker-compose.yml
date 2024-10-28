@@ -7,6 +7,8 @@ services:
       MYSQL_ROOT_PASSWORD: password
     ports:
       - '8888:3306'
+    networks:
+      - my_network
 
   resource-db:
     image: mysql:8.0
@@ -15,13 +17,15 @@ services:
       MYSQL_ROOT_PASSWORD: password
     ports:
       - '9999:3306'
+    networks:
+      - my_network
 
   auth-server:
     build:
       context: .
       dockerfile: ./apps/auth/Dockerfile
     ports:
-      - '3000:3000' # HTTP 요청 포트
+      - '3002:3001' # HTTP 요청 포트
       - '5001:5001' # gRPC 요청 포트
     env_file:
       - .env
@@ -32,17 +36,18 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
-      - GRPC_RESOURCE_SERVER_URL=${GRPC_RESOURCE_SERVER_URL}
+      - GRPC_RESOURCE_SERVER_URL=${GRPC_AUTH_SERVER_URL}
     depends_on:
       - auth-db
+    networks:
+      - my_network
 
   resource-server:
     build:
       context: .
       dockerfile: ./apps/resource/Dockerfile
     ports:
-      - '4000:4000' # HTTP 요청 포트
-      - '5002:5002' # gRPC 요청 포트
+      - '4002:4001' # HTTP 요청 포트
     env_file:
       - .env
     environment:
@@ -55,7 +60,9 @@ services:
       - GRPC_AUTH_SERVER_URL=${GRPC_AUTH_SERVER_URL}
     depends_on:
       - resource-db
+    networks:
+      - my_network
 
 networks:
-  default:
+  my_network:
     driver: bridge

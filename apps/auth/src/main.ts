@@ -3,18 +3,18 @@ import { AuthModule } from './auth.module';
 import { grpcServerOptions } from './grpc/grpc-server.options';
 
 async function bootstrap() {
+  // HTTP 서버 설정
   const app = await NestFactory.create(AuthModule);
+  await app.listen(3001);
+  console.log('HTTP Server is running on http://localhost:3001');
 
-  app.listen(3002, () => {
-    console.log('HTTP Server is running on http://localhost:3000');
-  });
-
+  // gRPC 서버 설정
   const grpcApp = await NestFactory.createMicroservice(
     AuthModule,
     grpcServerOptions,
   );
-
-  grpcApp.listen();
-  console.log('gRPC Server is running');
+  await grpcApp.listen();
+  console.log('gRPC Server is running on port 5001');
 }
+
 bootstrap();
