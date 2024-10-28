@@ -15,6 +15,8 @@ export class AuthService {
   async validateToken(
     data: ValidateTokenRequest,
   ): Promise<ValidateTokenResponse> {
+    console.log('validateToken method in AuthService called with data:', data); // 메서드 호출 확인용 로그
+
     const { token } = data;
 
     try {
@@ -34,6 +36,7 @@ export class AuthService {
         role: user.role,
       };
     } catch (error) {
+      console.error('Token validation failed:', error);
       throw new Error('Invalid token');
     }
   }
