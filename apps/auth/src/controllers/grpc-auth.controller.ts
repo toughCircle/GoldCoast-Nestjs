@@ -12,7 +12,6 @@ export class AuthController {
   ) {}
 
   @Post('valid')
-  @GrpcMethod()
   async validateToken(
     data: ValidateTokenRequest,
   ): Promise<ValidateTokenResponse> {
