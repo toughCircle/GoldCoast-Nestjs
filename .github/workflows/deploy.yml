@@ -56,7 +56,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${REMOTE_HOST}" >> ~/.ssh/known_hosts
           ssh "${REMOTE_USER}@${REMOTE_HOST}" << EOF
-            cd nestjs-project
+            cd nest-project
             docker-compose pull
             docker-compose up -d --build
             exit
