@@ -12,5 +12,5 @@ export interface ValidateTokenResponse {
 }
 
 export interface AuthServiceClient {
-  validateToken(data: ValidateTokenRequest): Observable<ValidateTokenResponse>;
+  ValidateToken(data: ValidateTokenRequest): Observable<ValidateTokenResponse>;
 }
