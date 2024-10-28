@@ -20,16 +20,16 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('Token is missing');
     }
 
-    // validateToken 호출
-    const validateTokenResponse = await this.authService.validateToken(token);
+    try {
+      // gRPC로 인증 서버의 validateToken 호출
+      const validateTokenResponse = await this.authService.validateToken(token);
 
-    if (validateTokenResponse) {
+      // 요청에 사용자 정보 추가
       request['user'] = validateTokenResponse;
-      const response = await firstValueFrom(validateTokenResponse);
-      console.log(response);
       return true;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
     }
-    throw new UnauthorizedException('Invalid token');
   }
 
   private extractTokenFromHeader(request: Request): string | null {
