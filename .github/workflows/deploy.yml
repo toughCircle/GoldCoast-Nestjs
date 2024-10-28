@@ -57,7 +57,7 @@ jobs:
           ssh-keyscan -H "${REMOTE_HOST}" >> ~/.ssh/known_hosts
           ssh "${REMOTE_USER}@${REMOTE_HOST}" << EOF
             cd nest-project
-            docker-compose pull
+            git pull origin main
             docker-compose up -d --build
             exit
           EOF
