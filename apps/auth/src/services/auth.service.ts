@@ -11,7 +11,7 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  @GrpcMethod('AuthService', 'validateToken')
+  @GrpcMethod()
   async validateToken(
     data: ValidateTokenRequest,
   ): Promise<ValidateTokenResponse> {
