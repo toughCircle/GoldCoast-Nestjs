@@ -28,7 +28,7 @@ export class AuthService implements OnModuleInit {
 
     // gRPC 요청을 보내고 응답을 받기
     const response: Observable<ValidateTokenResponse> =
-      this.authServiceGrpc.validateToken(request);
+      this.authServiceGrpc.ValidateToken(request);
 
     return await firstValueFrom(response);
   }
