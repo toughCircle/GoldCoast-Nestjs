@@ -35,9 +35,23 @@ export class GoldPriceService {
       const response: AxiosResponse<string> = await firstValueFrom(
         this.httpService.get(url, { headers }),
       );
-      return response.data;
+
+      console.log('API Response:', response.data); // 응답 데이터 확인용 로그
+
+      // 응답이 JSON 형식인지 확인
+      if (typeof response.data === 'string' && response.data.startsWith('{')) {
+        return response.data;
+      } else {
+        throw new BusinessException(
+          'Unexpected response format',
+          StatusCode.INTERNAL_SERVER_ERROR,
+        );
+      }
     } catch (error) {
-      console.error('Error occurred: ', error.message);
+      console.error(
+        'Error occurred while fetching gold price: ',
+        error.message,
+      );
       throw new BusinessException(
         'Error fetching gold price',
         StatusCode.INTERNAL_SERVER_ERROR,
@@ -52,6 +66,7 @@ export class GoldPriceService {
   ): number {
     try {
       const response = JSON.parse(goldPriceResponse);
+      console.log('Parsed response:', response); // 파싱된 응답 확인용 로그
 
       let pricePerGram = 0;
 
