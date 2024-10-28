@@ -26,7 +26,7 @@ jobs:
       - name: Build and push Docker image for auth service
         uses: docker/build-push-action@v2
         with:
-          context: ./apps/auth
+          context: .
           file: ./apps/auth/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/nestjs-auth:latest # auth 서비스 이미지 이름
@@ -35,7 +35,7 @@ jobs:
       - name: Build and push Docker image for resource service
         uses: docker/build-push-action@v2
         with:
-          context: ./apps/resource
+          context: .
           file: ./apps/resource/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/nestjs-resource:latest # resource 서비스 이미지 이름
