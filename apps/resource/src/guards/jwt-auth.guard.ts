@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { Request } from 'express';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -28,6 +27,8 @@ export class JwtAuthGuard implements CanActivate {
       request['user'] = validateTokenResponse;
       return true;
     } catch (error) {
+      console.log('호출 에러 발생', error);
+
       throw new UnauthorizedException('Invalid token');
     }
   }
