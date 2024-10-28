@@ -25,12 +25,12 @@ services:
       context: .
       dockerfile: ./apps/auth/Dockerfile
     ports:
-      - '3002:3001' # HTTP 요청 포트
-      - '5001:5001' # gRPC 요청 포트
+      - '3002:3001'
+      - '5001:5001'
     env_file:
       - .env
     environment:
-      - DB_HOST=${AUTH_DB_HOST} # .env 파일의 AUTH_DB_HOST 사용
+      - DB_HOST=${AUTH_DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_DATABASE=${AUTH_DB_DATABASE}
       - DB_USERNAME=${DB_USERNAME}
@@ -47,11 +47,11 @@ services:
       context: .
       dockerfile: ./apps/resource/Dockerfile
     ports:
-      - '4002:4001' # HTTP 요청 포트
+      - '4002:4001'
     env_file:
       - .env
     environment:
-      - DB_HOST=${RESOURCE_DB_HOST} # .env 파일의 RESOURCE_DB_HOST 사용
+      - DB_HOST=${RESOURCE_DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_DATABASE=${RESOURCE_DB_DATABASE}
       - DB_USERNAME=${DB_USERNAME}

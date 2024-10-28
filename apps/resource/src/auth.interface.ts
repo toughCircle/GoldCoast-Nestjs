@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+
 export interface ValidateTokenRequest {
   token: string;
 }
@@ -7,4 +9,8 @@ export interface ValidateTokenResponse {
   username: string;
   role: string;
   email: string;
+}
+
+export interface AuthServiceClient {
+  validateToken(data: ValidateTokenRequest): Observable<ValidateTokenResponse>;
 }

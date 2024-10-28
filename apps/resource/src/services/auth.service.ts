@@ -1,15 +1,15 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Inject } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { ValidateTokenRequest, ValidateTokenResponse } from '../auth.interface';
-
-interface AuthServiceClient {
-  validateToken(data: ValidateTokenRequest): Observable<ValidateTokenResponse>;
-}
+import { firstValueFrom, Observable } from 'rxjs';
+import {
+  AuthServiceClient,
+  ValidateTokenRequest,
+  ValidateTokenResponse,
+} from '../auth.interface';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
   private authServiceGrpc: AuthServiceClient;
 
   constructor(@Inject('AUTH_SERVICE') private readonly client: ClientGrpc) {}
@@ -19,9 +19,13 @@ export class AuthService {
       this.client.getService<AuthServiceClient>('AuthService');
   }
 
-  // gRPC를 통해 인증 서버에 토큰 검증 요청
-  validateToken(token: string): Observable<ValidateTokenResponse> {
-    console.log('call validateToken');
-    return this.authServiceGrpc.validateToken({ token });
+  async validateToken(token: string): Promise<ValidateTokenResponse> {
+    const request: ValidateTokenRequest = { token };
+
+    // gRPC 요청을 보내고 응답을 받기
+    const response: Observable<ValidateTokenResponse> =
+      this.authServiceGrpc.validateToken(request);
+
+    return await firstValueFrom(response);
   }
 }
