@@ -26,7 +26,7 @@ export class Address {
   ): Address {
     const address = new Address();
     (address.streetAddress = streetAddress),
-      (address.streetAddress = addressDetail),
+      (address.addressDetail = addressDetail),
       (address.zipCode = zipCode),
       (address.user = user);
 

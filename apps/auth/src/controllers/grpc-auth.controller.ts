@@ -9,7 +9,7 @@ import { AuthService } from '../services/auth.service';
 export class GrpcAuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @GrpcMethod()
+  @GrpcMethod('AuthService', 'ValidateToken')
   ValidateToken(request: ValidateTokenRequest) {
     return this.authService.validateToken(request);
   }

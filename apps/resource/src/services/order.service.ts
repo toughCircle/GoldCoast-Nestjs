@@ -13,6 +13,7 @@ import { User } from '../models/user.model';
 import { OrderItem } from '../models/order-item.model';
 import { StatusCode } from '../enums/status-code.enum';
 import { OrderDto } from '../dto/order.dto';
+import { BaseApiResponse } from '@app/common';
 
 @Injectable()
 export class OrderService {
@@ -21,6 +22,10 @@ export class OrderService {
   constructor(
     @InjectRepository(Order)
     private orderRepository: Repository<Order>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(OrderItem)
+    private orderItemRepository: Repository<OrderItem>,
     @InjectRepository(Address)
     private addressRepository: Repository<Address>,
     @InjectRepository(Item)
@@ -29,21 +34,18 @@ export class OrderService {
     private readonly priceFactory: PriceFactory,
   ) {}
 
-  // 주문 생성
   async createOrder(
     orderRequest: OrderRequest,
     userResponse: ValidateTokenResponse,
-  ): Promise<void> {
-    this.orderValidator.validateUserRole(userResponse.role, 'BUYER');
+  ): Promise<BaseApiResponse<OrderDto>> {
+    this.orderValidator.validateUserRole(userResponse.role, 'USER');
 
     const user = User.create(userResponse.username, userResponse.email);
+    await this.userRepository.save(user); // userId 생성
 
     const orderNumber = this.generateUniqueOrderNumber();
-
-    // 주문 상태를 초기값으로 설정
     const status = OrderStatus.ORDER_PLACED;
 
-    // OrderItems 생성
     const orderItems: OrderItem[] = await Promise.all(
       orderRequest.items.map(async (orderItemRequest) => {
         const item = await this.itemRepository.findOne({
@@ -54,16 +56,24 @@ export class OrderService {
           throw new Error('Item not found');
         }
 
-        // OrderItem 생성 및 설정
+        this.orderValidator.validateItemQuantity(
+          orderItemRequest.quantity,
+          item.quantity,
+        );
+
         const orderItem = new OrderItem();
         orderItem.item = item;
         orderItem.quantity = orderItemRequest.quantity;
         orderItem.price = item.price;
+        await this.orderItemRepository.save(orderItem);
+
+        item.quantity -= orderItemRequest.quantity;
+        await this.itemRepository.save(item);
+
         return orderItem;
       }),
     );
 
-    // 새로운 주소 생성
     const address = Address.create(
       orderRequest.shippingAddress.streetAddress,
       orderRequest.shippingAddress.zipCode,
@@ -72,37 +82,18 @@ export class OrderService {
     );
     await this.addressRepository.save(address);
 
-    // 새로운 주문 생성
     const order = Order.create(user, status, orderItems, orderNumber, address);
 
-    for (const orderItemRequest of orderRequest.items) {
-      const item = await this.itemRepository.findOne({
-        where: { id: orderItemRequest.id },
-      });
-      if (!item) throw new Error('Item not found');
-
-      this.orderValidator.validateItemQuantity(
-        orderItemRequest.quantity,
-        item.quantity,
-      );
-
-      const orderItem = this.priceFactory.createOrderItem(
-        order,
-        item,
-        orderItemRequest.quantity,
-      );
-      order.addOrderItem(orderItem);
-
-      // 각 상품의 판매 가능 수량 조정
-      item.quantity -= orderItemRequest.quantity;
-      await this.itemRepository.save(item);
-    }
-
-    // 주문의 총 금액 계산
-    const totalPrice = this.calculateTotalPrice(order.orderItems);
+    const totalPrice = this.calculateTotalPrice(orderItems);
     order.totalPrice = totalPrice;
 
     await this.orderRepository.save(order);
+
+    return BaseApiResponse.of(
+      HttpStatus.CREATED,
+      'Order success',
+      OrderDto.fromEntity(order),
+    );
   }
 
   // 주문 총 금액 계산
@@ -119,9 +110,13 @@ export class OrderService {
   }
 
   // 주문 조회 (사용자에 따른 필터링 포함)
-  async getOrdersByUser(userId: number): Promise<Order[]> {
+  async getOrdersByUser(userResponse: ValidateTokenResponse): Promise<Order[]> {
+    const email = userResponse.email;
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
     return this.orderRepository.find({
-      where: { user: { id: userId } },
+      where: { user: { id: user.id } },
       relations: ['orderItems', 'shippingAddress'],
     });
   }
@@ -132,8 +127,10 @@ export class OrderService {
     newStatus: OrderStatus,
     userRole: string,
   ): Promise<OrderDto> {
+    console.log('orderId: ', orderId);
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
+      relations: ['user', 'shippingAddress', 'orderItems'],
     });
     if (!order) throw new Error('Order not found');
 
@@ -148,6 +145,8 @@ export class OrderService {
 
     const savedOrder = await this.orderRepository.save(order);
 
+    console.log('savedOrder: ', savedOrder);
+
     return OrderDto.fromEntity(savedOrder);
   }
 
@@ -156,7 +155,7 @@ export class OrderService {
     orderId: number,
     userResponse: ValidateTokenResponse,
   ): Promise<void> {
-    if (userResponse.role !== 'BUYER') {
+    if (userResponse.role !== 'USER') {
       throw new UnauthorizedException(StatusCode.FORBIDDEN);
     }
 

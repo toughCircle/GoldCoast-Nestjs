@@ -14,11 +14,22 @@ import { Address } from './models/address.model';
 import { DBConfigModule } from './config/db-config.module';
 import { OrderController } from './controllers/order.controller';
 import { OrderService } from './services/order.service';
+import { OrderItem } from './models/order-item.model';
+import { User } from './models/user.model';
+import { OrderValidator } from './validators/order-validator.service';
+import { PriceFactory } from './services/price-factory.service';
 
 @Module({
   imports: [
     DBConfigModule,
-    TypeOrmModule.forFeature([Item, GoldPrice, Order, Address]),
+    TypeOrmModule.forFeature([
+      Item,
+      GoldPrice,
+      Order,
+      Address,
+      OrderItem,
+      User,
+    ]),
     ClientsModule.register([
       {
         name: 'AUTH_SERVICE',
@@ -38,6 +49,8 @@ import { OrderService } from './services/order.service';
     ItemService,
     GoldPriceService,
     OrderService,
+    OrderValidator,
+    PriceFactory,
   ],
   exports: [ItemService, OrderService],
 })
