@@ -34,12 +34,21 @@ export class GoldPriceService {
       redirect: 'follow' as RequestRedirect,
     };
 
-    fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((result) => console.log(result))
-      .catch((error) => new BusinessException(error, StatusCode.BAD_REQUEST));
-
-    return response;
+    try {
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) {
+        throw new BusinessException(
+          'Failed to fetch gold price',
+          StatusCode.BAD_REQUEST,
+        );
+      }
+      const result = await response.json(); // JSON 파싱을 기다림
+      console.log(result);
+      return result;
+    } catch (error) {
+      console.error('Error while fetching gold price:', error);
+      throw new BusinessException(error, StatusCode.BAD_REQUEST);
+    }
   }
 
   // API 응답에서 필요한 금 시세 추출
