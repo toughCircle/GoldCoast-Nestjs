@@ -12,14 +12,12 @@ import { Item } from './models/item.model';
 import { Order } from './models/order.model';
 import { Address } from './models/address.model';
 import { DBConfigModule } from './config/db-config.module';
-import { HttpModule } from '@nestjs/axios';
 import { OrderController } from './controllers/order.controller';
 import { OrderService } from './services/order.service';
 
 @Module({
   imports: [
     DBConfigModule,
-    HttpModule,
     TypeOrmModule.forFeature([Item, GoldPrice, Order, Address]),
     ClientsModule.register([
       {
