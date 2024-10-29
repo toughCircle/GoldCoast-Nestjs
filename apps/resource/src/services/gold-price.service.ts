@@ -4,52 +4,42 @@ import { Repository } from 'typeorm';
 import { ItemType } from '../enums/item-type.enum';
 import { BusinessException } from '../exceptions/business-exception';
 import { StatusCode } from '../enums/status-code.enum';
-import { HttpService } from '@nestjs/axios';
-import { AxiosResponse } from 'axios';
-import { firstValueFrom } from 'rxjs';
 import { GoldPrice } from '../models/gold-price.model';
 import { appConfig } from '../config/config';
+import { response } from 'express';
 
 @Injectable()
 export class GoldPriceService {
   constructor(
     @InjectRepository(GoldPrice)
     private readonly goldPriceRepository: Repository<GoldPrice>,
-    private readonly httpService: HttpService, // Axios 사용
   ) {}
 
   // API로부터 금 시세 가져오기
   async getGoldPriceInKRW(): Promise<any> {
-    // 타입을 string에서 any로 변경
     const symbol = 'XAU';
     const currency = 'KRW';
     const apiKey = appConfig.apis.apiKey;
     const baseUrl = appConfig.apis.apiUrl;
     const url = `${baseUrl}/${symbol}/${currency}`;
 
-    const headers = {
-      'x-access-token': apiKey,
-      'Content-Type': 'application/json',
+    const headers = new Headers();
+
+    headers.append('x-access-token', apiKey);
+    headers.append('Content-Type', 'application/json');
+
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+      redirect: 'follow' as RequestRedirect,
     };
 
-    try {
-      const response: AxiosResponse<any> = await firstValueFrom(
-        this.httpService.get(url, { headers }),
-      );
+    fetch(`${url}/${symbol}/${currency}`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => new BusinessException(error, StatusCode.BAD_REQUEST));
 
-      console.log('API Response:', response.data);
-
-      return response.data;
-    } catch (error) {
-      console.error(
-        'Error occurred while fetching gold price: ',
-        error.message,
-      );
-      throw new BusinessException(
-        'Error fetching gold price',
-        StatusCode.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return response;
   }
 
   // API 응답에서 필요한 금 시세 추출

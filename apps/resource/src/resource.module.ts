@@ -13,6 +13,8 @@ import { Order } from './models/order.model';
 import { Address } from './models/address.model';
 import { DBConfigModule } from './config/db-config.module';
 import { HttpModule } from '@nestjs/axios';
+import { OrderController } from './controllers/order.controller';
+import { OrderService } from './services/order.service';
 
 @Module({
   imports: [
@@ -31,8 +33,14 @@ import { HttpModule } from '@nestjs/axios';
       },
     ]),
   ],
-  controllers: [ItemController],
-  providers: [AuthService, CommonService, ItemService, GoldPriceService],
-  exports: [ItemService],
+  controllers: [ItemController, OrderController],
+  providers: [
+    AuthService,
+    CommonService,
+    ItemService,
+    GoldPriceService,
+    OrderService,
+  ],
+  exports: [ItemService, OrderService],
 })
 export class ResourceModule {}
