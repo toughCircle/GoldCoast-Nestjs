@@ -42,9 +42,17 @@ export class GoldPriceService {
           StatusCode.BAD_REQUEST,
         );
       }
-      const result = await response.json(); // JSON 파싱을 기다림
-      console.log(result);
-      return result;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const result = await response.json();
+        console.log(result);
+        return result;
+      } else {
+        throw new BusinessException(
+          'Unexpected response format',
+          StatusCode.BAD_REQUEST,
+        );
+      }
     } catch (error) {
       console.error('Error while fetching gold price:', error);
       throw new BusinessException(error, StatusCode.BAD_REQUEST);
