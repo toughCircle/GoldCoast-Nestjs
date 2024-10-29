@@ -19,7 +19,8 @@ export class GoldPriceService {
   ) {}
 
   // API로부터 금 시세 가져오기
-  async getGoldPriceInKRW(): Promise<string> {
+  async getGoldPriceInKRW(): Promise<any> {
+    // 타입을 string에서 any로 변경
     const symbol = 'XAU';
     const currency = 'KRW';
     const apiKey = appConfig.apis.apiKey;
@@ -32,21 +33,13 @@ export class GoldPriceService {
     };
 
     try {
-      const response: AxiosResponse<string> = await firstValueFrom(
+      const response: AxiosResponse<any> = await firstValueFrom(
         this.httpService.get(url, { headers }),
       );
 
-      console.log('API Response:', response.data); // 응답 데이터 확인용 로그
+      console.log('API Response:', response.data);
 
-      // 응답이 JSON 형식인지 확인
-      if (typeof response.data === 'string' && response.data.startsWith('{')) {
-        return response.data;
-      } else {
-        throw new BusinessException(
-          'Unexpected response format',
-          StatusCode.INTERNAL_SERVER_ERROR,
-        );
-      }
+      return response.data;
     } catch (error) {
       console.error(
         'Error occurred while fetching gold price: ',
@@ -60,28 +53,24 @@ export class GoldPriceService {
   }
 
   // API 응답에서 필요한 금 시세 추출
-  extractPriceFromResponse(
-    goldPriceResponse: string,
-    itemType: string,
-  ): number {
+  extractPriceFromResponse(goldPriceResponse: any, itemType: string): number {
     try {
-      const response = JSON.parse(goldPriceResponse);
-      console.log('Parsed response:', response); // 파싱된 응답 확인용 로그
+      console.log('Parsed response:', goldPriceResponse);
 
       let pricePerGram = 0;
 
       switch (itemType) {
         case 'GOLD_24':
-          pricePerGram = Number(response.price_gram_24k);
+          pricePerGram = Number(goldPriceResponse.price_gram_24k);
           break;
         case 'GOLD_22':
-          pricePerGram = Number(response.price_gram_22k);
+          pricePerGram = Number(goldPriceResponse.price_gram_22k);
           break;
         case 'GOLD_21':
-          pricePerGram = Number(response.price_gram_21k);
+          pricePerGram = Number(goldPriceResponse.price_gram_21k);
           break;
         case 'GOLD_18':
-          pricePerGram = Number(response.price_gram_18k);
+          pricePerGram = Number(goldPriceResponse.price_gram_18k);
           break;
         default:
           throw new BadRequestException(`Unsupported item type: ${itemType}`);
