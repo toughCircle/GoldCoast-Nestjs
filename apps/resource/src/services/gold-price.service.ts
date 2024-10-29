@@ -60,7 +60,7 @@ export class GoldPriceService {
   }
 
   // API 응답에서 필요한 금 시세 추출
-  extractPriceFromResponse(goldPriceResponse: any, itemType: string): number {
+  extractPriceFromResponse(goldPriceResponse: any, itemType: ItemType): number {
     try {
       const response = goldPriceResponse;
 
@@ -69,16 +69,16 @@ export class GoldPriceService {
       let pricePerGram = 0;
 
       switch (itemType) {
-        case 'GOLD_24':
+        case ItemType.GOLD_24:
           pricePerGram = Number(response.price_gram_24k);
           break;
-        case 'GOLD_22':
+        case ItemType.GOLD_22:
           pricePerGram = Number(response.price_gram_22k);
           break;
-        case 'GOLD_21':
+        case ItemType.GOLD_21:
           pricePerGram = Number(response.price_gram_21k);
           break;
-        case 'GOLD_18':
+        case ItemType.GOLD_18:
           pricePerGram = Number(response.price_gram_18k);
           break;
         default:

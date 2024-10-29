@@ -18,9 +18,12 @@ import { OrderItem } from './models/order-item.model';
 import { User } from './models/user.model';
 import { OrderValidator } from './validators/order-validator.service';
 import { PriceFactory } from './services/price-factory.service';
+import { TaskService } from './scheduler/task.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     DBConfigModule,
     TypeOrmModule.forFeature([
       Item,
@@ -51,6 +54,7 @@ import { PriceFactory } from './services/price-factory.service';
     OrderService,
     OrderValidator,
     PriceFactory,
+    TaskService,
   ],
   exports: [ItemService, OrderService],
 })
