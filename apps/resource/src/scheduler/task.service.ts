@@ -11,7 +11,7 @@ export class TaskService {
     this.goldPriceService.updateGoldPrice();
   }
 
-  @Cron('0 13 20 * * 1-5')
+  @Cron('0 0 23 * * 1-5')
   secondPriceUpdateService() {
     this.goldPriceService.updateGoldPrice();
   }
