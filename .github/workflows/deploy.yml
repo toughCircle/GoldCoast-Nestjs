@@ -58,6 +58,6 @@ jobs:
           ssh -i ~/.ssh/id_rsa "${REMOTE_USER}@${REMOTE_HOST}" << EOF
             cd nest-project
             docker-compose pull
-            docker-compose restart
+            docker-compose up --build
             exit
           EOF
