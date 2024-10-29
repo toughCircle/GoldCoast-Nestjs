@@ -62,11 +62,7 @@ export class GoldPriceService {
   // API 응답에서 필요한 금 시세 추출
   extractPriceFromResponse(goldPriceResponse: any, itemType: string): number {
     try {
-      // JSON 파싱 여부 확인
-      const response =
-        typeof goldPriceResponse === 'string'
-          ? JSON.parse(goldPriceResponse)
-          : goldPriceResponse;
+      const response = goldPriceResponse;
 
       console.log('Parsed response:', response);
 
