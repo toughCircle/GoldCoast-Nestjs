@@ -34,8 +34,8 @@ export class GoldPriceService {
       redirect: 'follow' as RequestRedirect,
     };
 
-    fetch(`${url}/${symbol}/${currency}`, requestOptions)
-      .then((response) => response.text())
+    fetch(url, requestOptions)
+      .then((response) => response.json())
       .then((result) => console.log(result))
       .catch((error) => new BusinessException(error, StatusCode.BAD_REQUEST));
 
