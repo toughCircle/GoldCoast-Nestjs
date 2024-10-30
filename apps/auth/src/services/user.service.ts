@@ -62,6 +62,7 @@ export class UserService {
     );
 
     const role = user.role;
+    console.log('role: ', user.role);
 
     return { accessToken, refreshToken, role };
   }

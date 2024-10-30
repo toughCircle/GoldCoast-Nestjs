@@ -92,8 +92,6 @@ export class AuthController {
 
       return response.status(HttpStatus.OK).json(
         BaseApiResponse.of(HttpStatus.OK, 'Login successful', {
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
           role: tokens.role,
         }),
       );
