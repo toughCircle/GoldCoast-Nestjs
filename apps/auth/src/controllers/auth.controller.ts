@@ -94,6 +94,7 @@ export class AuthController {
         BaseApiResponse.of(HttpStatus.OK, 'Login successful', {
           accessToken: tokens.accessToken,
           refreshToken: tokens.refreshToken,
+          role: tokens.role,
         }),
       );
     } catch (error) {
