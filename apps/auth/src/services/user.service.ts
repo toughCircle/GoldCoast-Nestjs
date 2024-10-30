@@ -5,7 +5,7 @@ import { User } from '../models/user.model';
 import { Repository } from 'typeorm';
 import { RegisterRequest } from '../dto/register.dto';
 import { LoginRequest } from '../dto/login.dto';
-import { Tokens } from '../dto/tokens.dto';
+import { UserResponse } from '../dto/tokens.dto';
 
 @Injectable()
 export class UserService {
@@ -39,7 +39,7 @@ export class UserService {
     request: LoginRequest,
     ip: string,
     userAgent: string,
-  ): Promise<Tokens> {
+  ): Promise<UserResponse> {
     const user = await this.findByEmail(request.email);
 
     const bcrypt = require('bcryptjs');
@@ -61,7 +61,9 @@ export class UserService {
       userAgent,
     );
 
-    return { accessToken, refreshToken };
+    const role = user.role;
+
+    return { accessToken, refreshToken, role };
   }
 
   async refreshAccessToken(
