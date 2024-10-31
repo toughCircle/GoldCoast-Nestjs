@@ -9,11 +9,6 @@ async function bootstrap() {
 
   Logger.overrideLogger(['debug']);
 
-  // CORS 설정 추가
-  app.enableCors({
-    origin: 'http://localhost:3000', // 허용할 프론트엔드 도메인
-  });
-
   await app.listen(3001);
   console.log('HTTP Server is running on http://localhost:3001');
 
