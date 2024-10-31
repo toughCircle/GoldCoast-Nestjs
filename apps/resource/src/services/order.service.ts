@@ -67,16 +67,10 @@ export class OrderService {
           item.quantity,
         );
 
-        const orderItem = new OrderItem();
-        orderItem.item = item;
-        orderItem.quantity = orderItemRequest.quantity;
-        orderItem.price = item.price;
-        await this.orderItemRepository.save(orderItem);
-
-        item.quantity -= orderItemRequest.quantity;
-        await this.itemRepository.save(item);
-
-        return orderItem;
+        return this.priceFactory.createOrderItem(
+          item,
+          orderItemRequest.quantity,
+        );
       }),
     );
 
@@ -104,15 +98,13 @@ export class OrderService {
 
   // 주문 총 금액 계산
   private calculateTotalPrice(orderItems: OrderItem[]): number {
-    return orderItems.reduce((sum, orderItem) => {
-      return (
-        sum +
-        this.priceFactory.calculateTotalPrice(
-          orderItem.item,
-          orderItem.quantity,
-        )
-      );
-    }, 0);
+    return (
+      Math.round(
+        orderItems.reduce((sum, orderItem) => {
+          return sum + orderItem.item.price * orderItem.quantity;
+        }, 0) * 100,
+      ) / 100
+    );
   }
 
   // 주문 조회 (사용자에 따른 필터링 포함)

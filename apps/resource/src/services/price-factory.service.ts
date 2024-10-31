@@ -8,15 +8,14 @@ export class PriceFactory {
   calculateTotalPrice(item: Item, quantity: number): number {
     const pricePerGram = item.price;
 
-    const totalPrice = Math.round(pricePerGram * quantity * 100) / 100;
+    const totalPrice = Math.round(pricePerGram * quantity * 100);
 
     return totalPrice;
   }
 
   // 주문 항목 생성
-  createOrderItem(order: Order, item: Item, quantity: number): OrderItem {
+  createOrderItem(item: Item, quantity: number): OrderItem {
     const orderItem = new OrderItem();
-    orderItem.order = order;
     orderItem.item = item;
     orderItem.quantity = quantity;
 
