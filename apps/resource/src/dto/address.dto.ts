@@ -1,9 +1,20 @@
+import { Address } from '../models/address.model';
+
 export class AddressDto {
-  street: string;
+  id: number;
 
-  city: string;
+  zipCode: string;
 
-  country: string;
+  streetAddress: string;
 
-  postalCode: string;
+  addressDetail: string;
+
+  static fromEntity(address: Address): AddressDto {
+    const dto = new AddressDto();
+    dto.id = address.id;
+    dto.streetAddress = address.streetAddress;
+    dto.zipCode = address.zipCode;
+    dto.addressDetail = address.addressDetail;
+    return dto;
+  }
 }

@@ -2,6 +2,8 @@ import { OrderItem } from '../models/order-item.model';
 import { OrderStatus } from '../enums/order-status.enum';
 import { Address } from '../models/address.model';
 import { Order } from '../models/order.model';
+import { AddressDto } from './address.dto';
+import { OrderItemDto } from './order-item.dto';
 
 export class OrderDto {
   id: number;
@@ -16,9 +18,9 @@ export class OrderDto {
 
   status: OrderStatus;
 
-  shippingAddress: Address;
+  shippingAddress: AddressDto;
 
-  orderItems: OrderItem[];
+  orderItems: OrderItemDto[];
 
   static fromEntity(order: Order): OrderDto {
     const orderDto = new OrderDto();
@@ -28,8 +30,8 @@ export class OrderDto {
     orderDto.orderNumber = order.orderNumber;
     orderDto.totalPrice = order.totalPrice;
     orderDto.status = order.status;
-    orderDto.shippingAddress = order.shippingAddress;
-    orderDto.orderItems = order.orderItems;
+    orderDto.shippingAddress = AddressDto.fromEntity(order.shippingAddress);
+    orderDto.orderItems = order.orderItems.map(OrderItemDto.fromEntity);
     return orderDto;
   }
 }
