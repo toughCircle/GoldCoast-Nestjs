@@ -108,13 +108,7 @@ export class OrderService {
   // 주문 총 금액 계산
   private calculateTotalPrice(orderItems: OrderItem[]): number {
     return orderItems.reduce((sum, orderItem) => {
-      return (
-        sum +
-        this.priceFactory.calculateTotalPrice(
-          orderItem.item,
-          orderItem.quantity,
-        )
-      );
+      return sum + orderItem.price;
     }, 0);
   }
 
