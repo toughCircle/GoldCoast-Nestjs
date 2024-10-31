@@ -16,4 +16,10 @@ export class GoldPriceController {
       price,
     );
   }
+
+  @Get('update')
+  async updatePrice() {
+    await this.goldPriceService.updateGoldPrice();
+    console.log('updated successfully');
+  }
 }
