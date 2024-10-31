@@ -40,8 +40,14 @@ export class OrderService {
   ): Promise<BaseApiResponse<OrderDto>> {
     this.orderValidator.validateUserRole(userResponse.role, 'USER');
 
-    const user = User.create(userResponse.username, userResponse.email);
-    await this.userRepository.save(user); // userId 생성
+    let user = await this.userRepository.findOne({
+      where: { email: userResponse.email },
+    });
+
+    if (!user) {
+      user = User.create(userResponse.username, userResponse.email);
+      await this.userRepository.save(user); // 새로운 사용자 저장
+    }
 
     const orderNumber = this.generateUniqueOrderNumber();
     const status = OrderStatus.ORDER_PLACED;
