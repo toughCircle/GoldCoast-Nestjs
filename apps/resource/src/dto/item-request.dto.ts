@@ -3,9 +3,6 @@ import { ItemType } from '../enums/item-type.enum';
 
 export class ItemRequest {
   @IsString()
-  itemName: string;
-
-  @IsString()
   itemType: ItemType;
 
   @IsNumber()
