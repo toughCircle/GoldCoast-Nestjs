@@ -1,11 +1,9 @@
+import { BaseEntity } from '@app/common/base.entity';
 import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity('users')
 @Unique(['email'])
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity {
   @Column()
   username: string;
 

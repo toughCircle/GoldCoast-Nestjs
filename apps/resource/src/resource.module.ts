@@ -20,6 +20,7 @@ import { OrderValidator } from './validators/order-validator.service';
 import { PriceFactory } from './services/price-factory.service';
 import { TaskService } from './scheduler/task.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { GoldPriceController } from './controllers/gold-price.controller';
 
 @Module({
   imports: [
@@ -45,7 +46,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       },
     ]),
   ],
-  controllers: [ItemController, OrderController],
+  controllers: [ItemController, OrderController, GoldPriceController],
   providers: [
     AuthService,
     CommonService,

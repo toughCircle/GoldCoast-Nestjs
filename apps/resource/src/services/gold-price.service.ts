@@ -7,6 +7,7 @@ import { StatusCode } from '../enums/status-code.enum';
 import { GoldPrice } from '../models/gold-price.model';
 import { appConfig } from '../config/config';
 import { response } from 'express';
+import { GoldPriceDto } from '../dto/gold-price.dto';
 
 @Injectable()
 export class GoldPriceService {
@@ -14,6 +15,11 @@ export class GoldPriceService {
     @InjectRepository(GoldPrice)
     private readonly goldPriceRepository: Repository<GoldPrice>,
   ) {}
+
+  async getPrice(): Promise<GoldPriceDto[]> {
+    const goldPrices = await this.goldPriceRepository.find();
+    return goldPrices.map((goldPrice) => GoldPriceDto.fromEntity(goldPrice));
+  }
 
   // API로부터 금 시세 가져오기
   async getGoldPriceInKRW(): Promise<any> {

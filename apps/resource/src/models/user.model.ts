@@ -7,13 +7,11 @@ import {
 } from 'typeorm';
 import { Address } from './address.model';
 import { Order } from './order.model';
+import { BaseEntity } from '@app/common/base.entity';
 
 @Entity('users')
 @Unique(['email'])
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity {
   @Column()
   username: string;
 

@@ -1,11 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { ItemType } from '../enums/item-type.enum';
+import { BaseEntity } from '@app/common/base.entity';
 
 @Entity()
-export class GoldPrice {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class GoldPrice extends BaseEntity {
   @Column()
   goldType: ItemType;
 

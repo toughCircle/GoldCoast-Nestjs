@@ -9,15 +9,13 @@ import { User } from './user.model';
 import { OrderItem } from './order-item.model';
 import { OrderStatus } from '../enums/order-status.enum';
 import { Address } from './address.model';
+import { BaseEntity } from '@app/common/base.entity';
 
 @Entity()
-export class Order {
+export class Order extends BaseEntity {
   addOrderItem(orderItem: OrderItem) {
     this.orderItems.push(orderItem);
   }
-
-  @PrimaryGeneratedColumn()
-  id: number;
 
   @ManyToOne('User', (user: User) => user.orders)
   user: User;

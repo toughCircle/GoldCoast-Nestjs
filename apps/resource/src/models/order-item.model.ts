@@ -1,12 +1,10 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Order } from './order.model';
 import { Item } from './item.model';
+import { BaseEntity } from '@app/common/base.entity';
 
 @Entity()
-export class OrderItem {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class OrderItem extends BaseEntity {
   @ManyToOne('Order', (order: Order) => order.orderItems)
   order: Order;
 
