@@ -20,9 +20,6 @@ export class Order extends BaseEntity {
   @ManyToOne('User', (user: User) => user.orders)
   user: User;
 
-  @Column({ type: 'timestamp' })
-  orderDate: Date;
-
   @Column()
   orderNumber: string;
 
@@ -47,7 +44,6 @@ export class Order extends BaseEntity {
   ): Order {
     const order = new Order();
     (order.user = user),
-      (order.orderDate = new Date()),
       (order.status = status),
       (order.orderItems = orderItems);
     order.orderNumber = orderNumber;

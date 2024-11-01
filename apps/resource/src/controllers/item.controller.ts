@@ -53,6 +53,7 @@ export class ItemController {
 
   // 전체 아이템 목록 조회 (모든 사용자 가능)
   @Get()
+  @UseGuards()
   async getAllItems(): Promise<BaseApiResponse<ItemDto[]>> {
     const items = await this.itemService.getAllItems();
     return BaseApiResponse.of(

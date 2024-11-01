@@ -26,7 +26,7 @@ export class OrderDto {
     const orderDto = new OrderDto();
     orderDto.id = order.id;
     orderDto.userId = order.user.id;
-    orderDto.orderDate = order.orderDate;
+    orderDto.orderDate = order.createdAt;
     orderDto.orderNumber = order.orderNumber;
     orderDto.totalPrice = order.totalPrice;
     orderDto.status = order.status;
