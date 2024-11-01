@@ -6,12 +6,24 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { Request } from 'express';
+import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private reflector: Reflector,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.get<boolean>(
+      'isPublic',
+      context.getHandler(),
+    );
+    if (isPublic) {
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest<Request>();
     const requestPath = request.path;
 

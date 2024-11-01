@@ -11,6 +11,7 @@ import {
   HttpStatus,
   UseGuards,
   Req,
+  SetMetadata,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service.js';
 import { ItemService } from '../services/item.service';
@@ -52,6 +53,7 @@ export class ItemController {
   }
 
   // 전체 아이템 목록 조회 (모든 사용자 가능)
+  @SetMetadata('isPublic', true)
   @UseGuards()
   @Get()
   async getAllItems(): Promise<BaseApiResponse<ItemDto[]>> {
