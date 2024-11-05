@@ -98,13 +98,25 @@ export class OrderService {
     await this.itemRepository.save(orderRequest.items.map((item) => item));
 
     // 주소 생성 및 저장
-    const address = Address.create(
-      orderRequest.shippingAddress.streetAddress,
-      orderRequest.shippingAddress.zipCode,
-      orderRequest.shippingAddress.addressDetail,
-      user,
-    );
-    await this.addressRepository.save(address);
+    let address = await this.addressRepository.findOne({
+      where: {
+        streetAddress: orderRequest.shippingAddress.streetAddress,
+        zipCode: orderRequest.shippingAddress.zipCode,
+        addressDetail: orderRequest.shippingAddress.addressDetail,
+        user: user,
+      },
+    });
+
+    if (!address) {
+      // 주소가 없으면 새로 생성
+      address = Address.create(
+        orderRequest.shippingAddress.streetAddress,
+        orderRequest.shippingAddress.zipCode,
+        orderRequest.shippingAddress.addressDetail,
+        user,
+      );
+      await this.addressRepository.save(address);
+    }
 
     // 주문 생성 및 저장
     const order = Order.create(user, status, orderItems, orderNumber, address);
