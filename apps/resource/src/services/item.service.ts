@@ -76,6 +76,17 @@ export class ItemService {
     return items.map((item) => ItemDto.fromEntity(item));
   }
 
+  // 판매자의 등록 아이템 목록 조회
+  async getItemsByUser(
+    userResponse: ValidateTokenResponse,
+  ): Promise<ItemDto[]> {
+    const userId = Number(userResponse.userId);
+    const items = await this.itemRepository.find({
+      where: { sellerId: userId },
+    });
+    return items.map((item) => ItemDto.fromEntity(item));
+  }
+
   // 아이템 수정 (판매자만 가능)
   async updateItem(
     itemId: number,

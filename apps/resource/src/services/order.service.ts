@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository, Transaction } from 'typeorm';
 import { Order } from '../models/order.model';
 import { Address } from '../models/address.model';
 import { Item } from '../models/item.model';
@@ -14,6 +14,7 @@ import { OrderItem } from '../models/order-item.model';
 import { StatusCode } from '../enums/status-code.enum';
 import { OrderDto } from '../dto/order.dto';
 import { BaseApiResponse } from '@app/common';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class OrderService {
@@ -34,55 +35,69 @@ export class OrderService {
     private readonly priceFactory: PriceFactory,
   ) {}
 
+  @Transactional()
   async createOrder(
     orderRequest: OrderRequest,
     userResponse: ValidateTokenResponse,
   ): Promise<BaseApiResponse<OrderDto>> {
     this.orderValidator.validateUserRole(userResponse.role, 'USER');
 
+    // 사용자 조회 및 생성
     let user = await this.userRepository.findOne({
       where: { email: userResponse.email },
     });
 
     if (!user) {
       user = User.create(userResponse.username, userResponse.email);
-      await this.userRepository.save(user); // 새로운 사용자 저장
+      await this.userRepository.save(user);
     }
 
     const orderNumber = this.generateUniqueOrderNumber();
     const status = OrderStatus.ORDER_PLACED;
 
-    const orderItems: OrderItem[] = await Promise.all(
-      orderRequest.items.map(async (orderItemRequest) => {
-        const item = await this.itemRepository.findOne({
-          where: { id: orderItemRequest.id },
-        });
+    const itemIds = orderRequest.items.map((item) => item.id); // 아이템 ID 리스트 생성
 
-        if (!item) {
-          throw new Error('Item not found');
-        }
+    // 모든 아이템을 한 번에 조회
+    const items = await this.itemRepository.find({
+      where: { id: In(itemIds) },
+      lock: { mode: 'pessimistic_write' }, // 동시성 문제 방지
+    });
 
-        this.orderValidator.validateItemQuantity(
-          orderItemRequest.quantity,
-          item.quantity,
-        );
+    // 조회한 아이템들을 Map으로 변환하여 빠르게 접근할 수 있도록 설정
+    const itemMap = new Map(items.map((item) => [item.id, item]));
 
-        const orderItem = new OrderItem();
-        orderItem.item = item;
-        orderItem.quantity = orderItemRequest.quantity;
-        orderItem.price = this.priceFactory.calculateTotalPrice(
-          item,
-          orderItemRequest.quantity,
-        );
-        await this.orderItemRepository.save(orderItem);
+    const orderItems: OrderItem[] = [];
+    for (const orderItemRequest of orderRequest.items) {
+      const item = itemMap.get(orderItemRequest.id); // Map에서 아이템 조회
 
-        item.quantity -= orderItemRequest.quantity;
-        await this.itemRepository.save(item);
+      if (!item) {
+        throw new Error('Item not found');
+      }
 
-        return orderItem;
-      }),
-    );
+      this.orderValidator.validateItemQuantity(
+        orderItemRequest.quantity,
+        item.quantity,
+      );
 
+      const orderItem = new OrderItem();
+      orderItem.item = item;
+      orderItem.quantity = orderItemRequest.quantity;
+      orderItem.price = this.priceFactory.calculateTotalPrice(
+        item,
+        orderItemRequest.quantity,
+      );
+
+      orderItems.push(orderItem);
+      item.quantity -= orderItemRequest.quantity;
+    }
+
+    // 모든 OrderItems 한 번에 저장
+    await this.orderItemRepository.save(orderItems);
+
+    // 수량이 업데이트된 아이템들도 한 번에 저장
+    await this.itemRepository.save(orderRequest.items.map((item) => item));
+
+    // 주소 생성 및 저장
     const address = Address.create(
       orderRequest.shippingAddress.streetAddress,
       orderRequest.shippingAddress.zipCode,
@@ -91,11 +106,10 @@ export class OrderService {
     );
     await this.addressRepository.save(address);
 
+    // 주문 생성 및 저장
     const order = Order.create(user, status, orderItems, orderNumber, address);
-
     const totalPrice = this.calculateTotalPrice(orderItems);
     order.totalPrice = totalPrice;
-
     await this.orderRepository.save(order);
 
     return BaseApiResponse.of(

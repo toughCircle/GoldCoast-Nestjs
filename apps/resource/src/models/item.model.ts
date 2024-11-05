@@ -1,5 +1,5 @@
 import { BaseEntity } from '@app/common/base.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 @Entity()
 export class Item extends BaseEntity {
@@ -9,7 +9,7 @@ export class Item extends BaseEntity {
   @Column()
   price: number;
 
-  @Column()
+  @Column('decimal', { precision: 10, scale: 1 })
   quantity: number;
 
   @Column()

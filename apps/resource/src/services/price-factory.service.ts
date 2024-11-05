@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Item } from '../models/item.model';
-import { OrderItem } from '../models/order-item.model';
-import { Order } from '../models/order.model';
 
 @Injectable()
 export class PriceFactory {

@@ -13,7 +13,6 @@ import {
   Req,
   SetMetadata,
 } from '@nestjs/common';
-import { AuthService } from '../services/auth.service.js';
 import { ItemService } from '../services/item.service';
 import { ItemRequest } from '../dto/item-request.dto.js';
 import { BaseApiResponse } from '@app/common';
@@ -61,6 +60,20 @@ export class ItemController {
     return BaseApiResponse.of(
       HttpStatus.OK,
       'All items retrieved successfully',
+      items,
+    );
+  }
+
+  // 판매자가 등록한 상품 조회
+  @Get()
+  async getSellerItems(
+    @Req() request: Request,
+  ): Promise<BaseApiResponse<ItemDto[]>> {
+    const userResponse = request['user'];
+    const items = await this.itemService.getItemsByUser(userResponse);
+    return BaseApiResponse.of(
+      HttpStatus.OK,
+      'Item retrieved successfully',
       items,
     );
   }

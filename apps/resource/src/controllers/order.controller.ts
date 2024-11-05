@@ -31,7 +31,7 @@ export class OrderController {
 
   // 사용자의 모든 주문 조회
   @Get()
-  findOne(@Req() request: Request, @Param('id') id: string) {
+  findOne(@Req() request: Request) {
     const user = request['user'];
     return this.orderService.getOrdersByUser(user);
   }
