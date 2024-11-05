@@ -31,9 +31,13 @@ export class OrderController {
 
   // 사용자의 모든 주문 조회
   @Get()
-  findOne(@Req() request: Request) {
+  findOne(
+    @Req() request: Request,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
     const user = request['user'];
-    return this.orderService.getOrdersByUser(user);
+    return this.orderService.getOrdersByUser(user, page, limit);
   }
 
   // 주문 상태 수정

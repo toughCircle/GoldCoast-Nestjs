@@ -139,15 +139,31 @@ export class OrderService {
   }
 
   // 주문 조회 (사용자에 따른 필터링 포함)
-  async getOrdersByUser(userResponse: ValidateTokenResponse): Promise<Order[]> {
+  async getOrdersByUser(
+    userResponse: ValidateTokenResponse,
+    page: number,
+    limit: number,
+  ): Promise<{ data: OrderDto[]; total: number; currentPage: number }> {
+    const offset = (page - 1) * limit;
     const email = userResponse.email;
     const user = await this.userRepository.findOne({
       where: { email },
     });
-    return this.orderRepository.find({
+    const [orders, total] = await this.orderRepository.findAndCount({
       where: { user: { id: user.id } },
       relations: ['orderItems', 'shippingAddress'],
+      skip: offset,
+      take: limit,
+      order: { createdAt: 'DESC' },
     });
+
+    const data = orders.map((order) => OrderDto.fromEntity(order));
+
+    return {
+      data,
+      total,
+      currentPage: page,
+    };
   }
 
   // 주문 상태 업데이트
