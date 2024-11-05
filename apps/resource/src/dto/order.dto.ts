@@ -1,6 +1,4 @@
-import { OrderItem } from '../models/order-item.model';
 import { OrderStatus } from '../enums/order-status.enum';
-import { Address } from '../models/address.model';
 import { Order } from '../models/order.model';
 import { AddressDto } from './address.dto';
 import { OrderItemDto } from './order-item.dto';
