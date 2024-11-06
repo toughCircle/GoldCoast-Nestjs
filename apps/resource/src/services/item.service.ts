@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ItemRequest } from '../dto/item-request.dto';
 import { ItemDto } from '../dto/item.dto';
@@ -81,7 +81,13 @@ export class ItemService {
     userResponse: ValidateTokenResponse,
   ): Promise<ItemDto[]> {
     const userId = Number(userResponse.userId);
-    console.log('seller id = ', userId);
+
+    // Log userId after conversion to ensure it's a number
+    console.log('seller id after conversion =', userId);
+    if (isNaN(userId)) {
+      throw new BadRequestException('Invalid userId');
+    }
+
     const items = await this.itemRepository.find({
       where: { sellerId: userId },
     });

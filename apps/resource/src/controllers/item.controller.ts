@@ -12,6 +12,7 @@ import {
   UseGuards,
   Req,
   SetMetadata,
+  BadRequestException,
 } from '@nestjs/common';
 import { ItemService } from '../services/item.service';
 import { ItemRequest } from '../dto/item-request.dto.js';
@@ -70,7 +71,13 @@ export class ItemController {
     @Req() request: Request,
   ): Promise<BaseApiResponse<ItemDto[]>> {
     const userResponse = request['user'];
-    console.log('call seller Items user = ', userResponse);
+    console.log('Received userResponse:', userResponse);
+
+    // Check if userResponse and userId are valid
+    if (!userResponse || !userResponse.userId) {
+      throw new BadRequestException('Invalid user data');
+    }
+
     const items = await this.itemService.getItemsByUser(userResponse);
     return BaseApiResponse.of(
       HttpStatus.OK,
