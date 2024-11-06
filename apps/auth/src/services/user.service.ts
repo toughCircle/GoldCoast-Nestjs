@@ -64,8 +64,9 @@ export class UserService {
     const role = user.role;
     const username = user.username;
     const email = user.email;
+    const createdAt = user.createdAt;
 
-    return { accessToken, refreshToken, username, email, role };
+    return { accessToken, refreshToken, username, email, role, createdAt };
   }
 
   async refreshAccessToken(

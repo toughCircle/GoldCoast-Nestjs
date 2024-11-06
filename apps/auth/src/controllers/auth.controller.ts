@@ -95,6 +95,7 @@ export class AuthController {
           username: tokens.username,
           email: tokens.email,
           role: tokens.role,
+          createdAt: tokens.createdAt,
         }),
       );
     } catch (error) {

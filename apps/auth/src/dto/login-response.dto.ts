@@ -15,4 +15,6 @@ export class UserResponse {
 
   @IsString()
   role: string;
+
+  createdAt: Date;
 }
