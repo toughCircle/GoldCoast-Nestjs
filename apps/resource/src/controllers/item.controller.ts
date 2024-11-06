@@ -70,6 +70,7 @@ export class ItemController {
     @Req() request: Request,
   ): Promise<BaseApiResponse<ItemDto[]>> {
     const userResponse = request['user'];
+    console.log('call seller Items user = ', userResponse);
     const items = await this.itemService.getItemsByUser(userResponse);
     return BaseApiResponse.of(
       HttpStatus.OK,
