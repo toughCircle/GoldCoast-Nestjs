@@ -5,7 +5,7 @@ import { User } from '../models/user.model';
 import { Repository } from 'typeorm';
 import { RegisterRequest } from '../dto/register.dto';
 import { LoginRequest } from '../dto/login.dto';
-import { UserResponse } from '../dto/tokens.dto';
+import { UserResponse } from '../dto/login-response.dto';
 
 @Injectable()
 export class UserService {
@@ -62,9 +62,10 @@ export class UserService {
     );
 
     const role = user.role;
-    console.log('role: ', user.role);
+    const username = user.username;
+    const email = user.email;
 
-    return { accessToken, refreshToken, role };
+    return { accessToken, refreshToken, username, email, role };
   }
 
   async refreshAccessToken(

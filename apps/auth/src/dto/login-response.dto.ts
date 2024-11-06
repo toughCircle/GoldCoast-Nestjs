@@ -8,5 +8,11 @@ export class UserResponse {
   refreshToken: string;
 
   @IsString()
+  username: string;
+
+  @IsString()
+  email: string;
+
+  @IsString()
   role: string;
 }
