@@ -95,7 +95,7 @@ export class OrderService {
     await this.orderItemRepository.save(orderItems);
 
     // 수량이 업데이트된 아이템들도 한 번에 저장
-    await this.itemRepository.save(orderRequest.items.map((item) => item));
+    await this.itemRepository.save(items);
 
     // 주소 생성 및 저장
     let address = await this.addressRepository.findOne({
