@@ -65,7 +65,7 @@ export class ItemController {
   }
 
   // 판매자가 등록한 상품 조회
-  @Get()
+  @Get('/my')
   async getSellerItems(
     @Req() request: Request,
   ): Promise<BaseApiResponse<ItemDto[]>> {

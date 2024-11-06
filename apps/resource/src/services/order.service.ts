@@ -150,24 +150,13 @@ export class OrderService {
       where: { email },
     });
 
-    const queryBuilder = this.orderRepository
-      .createQueryBuilder('order')
-      .leftJoinAndSelect('order.orderItems', 'orderItem')
-      .leftJoinAndSelect('orderItem.item', 'item')
-      .leftJoinAndSelect('order.shippingAddress', 'shippingAddress')
-      .leftJoinAndSelect('order.user', 'user');
-
-    if (userResponse.role === 'SELLER') {
-      // 판매자의 경우 자신이 등록한 아이템의 주문만 조회
-      queryBuilder.where('item.sellerId = :sellerId', { sellerId: user.id });
-    } else {
-      // 일반 사용자의 경우 자신의 주문만 조회
-      queryBuilder.where('order.userId = :userId', { userId: user.id });
-    }
-
-    queryBuilder.skip(offset).take(limit).orderBy('order.createdAt', 'DESC');
-
-    const [orders, total] = await queryBuilder.getManyAndCount();
+    const [orders, total] = await this.orderRepository.findAndCount({
+      where: { user: { id: user.id } },
+      relations: ['orderItems', 'orderItems.item', 'shippingAddress', 'user'],
+      skip: offset,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
 
     const data = orders.map((order) => OrderDto.fromEntity(order));
 
@@ -176,6 +165,26 @@ export class OrderService {
       total,
       currentPage: page,
     };
+  }
+
+  // 특정 상품의 주문 내역 조회
+  async getOrdersByItemId(
+    userResponse: ValidateTokenResponse,
+    itemId: number,
+    page: number,
+    limit: number,
+  ): Promise<{ data: OrderDto[]; total: number; currentPage: number }> {
+    const offset = (page - 1) * limit;
+    const [orders, total] = await this.orderRepository.findAndCount({
+      where: { orderItems: { item: { id: itemId } } },
+      relations: ['orderItems', 'orderItems.item', 'user', 'shippingAddress'],
+      skip: offset,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    const data = orders.map((order) => OrderDto.fromEntity(order));
+    return { data, total, currentPage: page };
   }
 
   // 주문 상태 업데이트

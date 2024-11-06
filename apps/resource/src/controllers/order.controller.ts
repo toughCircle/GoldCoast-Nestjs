@@ -40,6 +40,27 @@ export class OrderController {
     return this.orderService.getOrdersByUser(user, page, limit);
   }
 
+  @Get(':itemId')
+  async findByItemId(
+    @Req() request: Request,
+    @Param('itemId') itemId: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    const user = request['user'];
+    const data = await this.orderService.getOrdersByItemId(
+      user,
+      itemId,
+      page,
+      limit,
+    );
+    return BaseApiResponse.of(
+      HttpStatus.OK,
+      'order retrieved successfully',
+      data,
+    );
+  }
+
   // 주문 상태 수정
   @Patch(':orderId/status')
   async updateOrderStatus(
