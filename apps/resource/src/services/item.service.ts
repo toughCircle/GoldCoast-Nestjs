@@ -81,6 +81,7 @@ export class ItemService {
     userResponse: ValidateTokenResponse,
   ): Promise<ItemDto[]> {
     const userId = Number(userResponse.userId);
+    console.log('seller id = ', userId);
     const items = await this.itemRepository.find({
       where: { sellerId: userId },
     });
