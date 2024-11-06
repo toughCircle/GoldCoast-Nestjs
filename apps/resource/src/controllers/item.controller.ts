@@ -73,11 +73,6 @@ export class ItemController {
     const userResponse = request['user'];
     console.log('Received userResponse:', userResponse);
 
-    // Check if userResponse and userId are valid
-    if (!userResponse || !userResponse.userId) {
-      throw new BadRequestException('Invalid user data');
-    }
-
     const items = await this.itemService.getItemsByUser(userResponse);
     return BaseApiResponse.of(
       HttpStatus.OK,
