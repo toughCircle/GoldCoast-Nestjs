@@ -236,9 +236,10 @@ export class OrderService {
         const item = orderItem.item;
         if (!item) throw new Error('상품을 찾을 수 없습니다.');
 
-        item.quantity = parseFloat(
-          (item.quantity + orderItem.quantity).toFixed(1),
+        const updatedQuantity = parseFloat(
+          (Number(item.quantity) + Number(orderItem.quantity)).toFixed(1),
         );
+        item.quantity = updatedQuantity;
 
         await this.itemRepository.save(item);
       }
