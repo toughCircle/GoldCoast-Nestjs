@@ -236,7 +236,10 @@ export class OrderService {
         const item = orderItem.item;
         if (!item) throw new Error('상품을 찾을 수 없습니다.');
 
-        item.quantity += orderItem.quantity; // 주문 취소된 수량만큼 재고 추가
+        item.quantity = parseFloat(
+          (item.quantity + orderItem.quantity).toFixed(1),
+        );
+
         await this.itemRepository.save(item);
       }
     } catch (error) {
