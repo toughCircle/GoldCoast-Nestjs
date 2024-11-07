@@ -17,6 +17,8 @@ import { Request } from 'express';
 import { OrderStatus } from '../enums/order-status.enum';
 import { BaseApiResponse } from '@app/common';
 import { OrderDto } from '../dto/order.dto';
+import { Order } from '../models/order.model';
+import { UserResponse } from 'apps/auth/src/dto/login-response.dto';
 
 @Controller('resource/orders')
 @UseGuards(JwtAuthGuard)
@@ -46,15 +48,24 @@ export class OrderController {
     @Param('orderId') orderId: number,
     @Query('newStatus') newStatus: OrderStatus,
     @Req() request: Request,
-  ): Promise<BaseApiResponse<OrderDto>> {
-    const userRole = request['user'].role;
-    const updatedOrder = await this.orderService.updateOrderStatus(
-      orderId,
-      newStatus,
-      userRole,
-    );
-
-    return BaseApiResponse.of(HttpStatus.OK, 'Order success', updatedOrder);
+  ): Promise<BaseApiResponse<OrderDto> | BaseApiResponse<void>> {
+    const userResponse = request['user'];
+    if (newStatus === OrderStatus.ORDER_CANCELLED) {
+      await this.orderService.cancelOrder(orderId, userResponse);
+      return BaseApiResponse.of(
+        HttpStatus.OK,
+        'Order cancelled successfully',
+        null,
+      );
+    } else {
+      // 상태 업데이트 로직 호출
+      const updatedOrder = await this.orderService.updateOrderStatus(
+        orderId,
+        newStatus,
+        userResponse.role,
+      );
+      return BaseApiResponse.of(HttpStatus.OK, 'Order success', updatedOrder);
+    }
   }
 
   @Get(':itemId')

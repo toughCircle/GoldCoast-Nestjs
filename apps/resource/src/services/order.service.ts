@@ -217,28 +217,32 @@ export class OrderService {
   }
 
   // 주문 취소 (구매자만 가능)
+  @Transactional()
   async cancelOrder(
     orderId: number,
     userResponse: ValidateTokenResponse,
   ): Promise<void> {
-    if (userResponse.role !== 'USER') {
-      throw new UnauthorizedException(StatusCode.FORBIDDEN);
-    }
+    try {
+      const order = await this.findOrderById(orderId);
+      if (order.status !== OrderStatus.ORDER_PLACED) {
+        throw new Error('주문 취소가 불가능한 상태입니다.');
+      }
 
-    const order = await this.findOrderById(orderId);
-
-    // 주문 상태에 따른 취소 가능 여부 확인
-    if (order.status === OrderStatus.ORDER_PLACED) {
+      // 주문 상태 업데이트
       order.status = OrderStatus.ORDER_CANCELLED;
-    } else if (
-      [OrderStatus.PAYMENT_RECEIVED, OrderStatus.SHIPPED].includes(order.status)
-    ) {
-      throw new Error('REFUND_REQUIRED');
-    } else {
-      throw new Error('RETURN_OR_REFUND_REQUIRED');
-    }
+      await this.orderRepository.save(order);
 
-    await this.orderRepository.save(order);
+      // 상품 재고 업데이트
+      for (const orderItem of order.orderItems) {
+        const item = orderItem.item;
+        if (!item) throw new Error('상품을 찾을 수 없습니다.');
+
+        item.quantity += orderItem.quantity; // 주문 취소된 수량만큼 재고 추가
+        await this.itemRepository.save(item);
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   // 주문 번호 생성
