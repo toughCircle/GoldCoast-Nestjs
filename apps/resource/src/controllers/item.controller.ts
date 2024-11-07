@@ -39,6 +39,22 @@ export class ItemController {
     return BaseApiResponse.of(HttpStatus.CREATED, 'Item created successfully');
   }
 
+  // 판매자가 등록한 상품 조회
+  @Get('seller')
+  async getSellerItems(
+    @Req() request: Request,
+  ): Promise<BaseApiResponse<ItemDto[]>> {
+    const userResponse = request['user'];
+    console.log('Received userResponse:', userResponse);
+
+    const items = await this.itemService.getItemsByUser(userResponse);
+    return BaseApiResponse.of(
+      HttpStatus.OK,
+      'Item retrieved successfully',
+      items,
+    );
+  }
+
   // 아이템 조회 (모든 사용자 가능)
   @Get(':id')
   async getItemById(
@@ -61,22 +77,6 @@ export class ItemController {
     return BaseApiResponse.of(
       HttpStatus.OK,
       'All items retrieved successfully',
-      items,
-    );
-  }
-
-  // 판매자가 등록한 상품 조회
-  @Get('seller')
-  async getSellerItems(
-    @Req() request: Request,
-  ): Promise<BaseApiResponse<ItemDto[]>> {
-    const userResponse = request['user'];
-    console.log('Received userResponse:', userResponse);
-
-    const items = await this.itemService.getItemsByUser(userResponse);
-    return BaseApiResponse.of(
-      HttpStatus.OK,
-      'Item retrieved successfully',
       items,
     );
   }

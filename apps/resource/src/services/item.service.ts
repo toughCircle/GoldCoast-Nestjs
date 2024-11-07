@@ -82,8 +82,6 @@ export class ItemService {
   ): Promise<ItemDto[]> {
     const userId = Number(userResponse.userId);
 
-    // Log userId after conversion to ensure it's a number
-    console.log('seller id after conversion =', userId);
     if (isNaN(userId)) {
       throw new BadRequestException('Invalid userId');
     }
