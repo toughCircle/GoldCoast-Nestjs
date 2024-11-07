@@ -40,6 +40,23 @@ export class OrderController {
     return this.orderService.getOrdersByUser(user, page, limit);
   }
 
+  // 주문 상태 수정
+  @Patch(':orderId/status')
+  async updateOrderStatus(
+    @Param('orderId') orderId: number,
+    @Query('newStatus') newStatus: OrderStatus,
+    @Req() request: Request,
+  ): Promise<BaseApiResponse<OrderDto>> {
+    const userRole = request['user'].role;
+    const updatedOrder = await this.orderService.updateOrderStatus(
+      orderId,
+      newStatus,
+      userRole,
+    );
+
+    return BaseApiResponse.of(HttpStatus.OK, 'Order success', updatedOrder);
+  }
+
   @Get(':itemId')
   async findByItemId(
     @Req() request: Request,
@@ -59,22 +76,5 @@ export class OrderController {
       'order retrieved successfully',
       data,
     );
-  }
-
-  // 주문 상태 수정
-  @Patch(':orderId/status')
-  async updateOrderStatus(
-    @Param('orderId') orderId: number,
-    @Query('newStatus') newStatus: OrderStatus,
-    @Req() request: Request,
-  ): Promise<BaseApiResponse<OrderDto>> {
-    const userRole = request['user'].role;
-    const updatedOrder = await this.orderService.updateOrderStatus(
-      orderId,
-      newStatus,
-      userRole,
-    );
-
-    return BaseApiResponse.of(HttpStatus.OK, 'Order success', updatedOrder);
   }
 }
