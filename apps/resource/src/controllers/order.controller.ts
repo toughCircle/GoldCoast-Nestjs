@@ -17,8 +17,6 @@ import { Request } from 'express';
 import { OrderStatus } from '../enums/order-status.enum';
 import { BaseApiResponse } from '@app/common';
 import { OrderDto } from '../dto/order.dto';
-import { Order } from '../models/order.model';
-import { UserResponse } from 'apps/auth/src/dto/login-response.dto';
 
 @Controller('resource/orders')
 @UseGuards(JwtAuthGuard)

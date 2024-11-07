@@ -1,6 +1,6 @@
-import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository, Transaction } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Order } from '../models/order.model';
 import { Address } from '../models/address.model';
 import { Item } from '../models/item.model';
@@ -11,7 +11,6 @@ import { ValidateTokenResponse } from '../auth.interface';
 import { OrderStatus } from '../enums/order-status.enum';
 import { User } from '../models/user.model';
 import { OrderItem } from '../models/order-item.model';
-import { StatusCode } from '../enums/status-code.enum';
 import { OrderDto } from '../dto/order.dto';
 import { BaseApiResponse } from '@app/common';
 import { Transactional } from 'typeorm-transactional';
